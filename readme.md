@@ -1,4 +1,4 @@
-# Scrape Steam Market via TOR
+# Scraping Steam Market via TOR
 ## Setup
 
 - $ sudo apt-get install tor
