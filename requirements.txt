@@ -1,0 +1,17 @@
+beautifulsoup4==4.8.2
+bs4==0.0.1
+certifi==2019.11.28
+chardet==3.0.4
+idna==2.9
+packaging==20.3
+pkg-resources==0.0.0
+pyparsing==2.4.6
+PyQt-builder==1.2.0
+PySocks==1.7.1
+requests==2.23.0
+sip==5.1.1
+six==1.14.0
+soupsieve==2.0
+stem==1.8.0
+toml==0.10.0
+urllib3==1.25.8

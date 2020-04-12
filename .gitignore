@@ -1,0 +1,6 @@
+# Git Ignore
+
+share/python-wheels/
+lib/
+__pycache__/
+var/
