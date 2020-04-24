@@ -41,17 +41,25 @@ class BatchMain:
         torIP = ""
         while (steamMarketUrl != ""):
             if(torIP != "" and realIP != torIP):
+                logging.info(steamMarketUrl)
                 responseNormal = self._torManager.doRequest(steamMarketUrl)
+                requestState = {
+                    "Cookies": self._torManager.getCookies().get_dict(),
+                    "RequestHeader": dict(self._torManager.getHeader()),
+                    "ResponseHeader": dict(responseNormal.headers)
+                }
+                logging.info(requestState)
                 if isinstance(responseNormal, Response):
                     if(responseNormal.status_code == 200):
                         self.writeTextToFile("csgo_"+str(self._steamScraper.getStartPointer())+".json", responseNormal.text)
+                        
                         self._steamScraper.nextPointer()
                         steamMarketUrl = self._steamScraper.getUrl()
-                        torIPDict[torIP]["goodReq"] += 1
+                        torIPDict[torIP]["goodReq"].append(requestState)
                     else: # among others HTTP Status 429
                         logging.error("Steam Rest Api Request wasn't successfull status_code != 200: ".format(responseNormal.status_code))
                         logging.error("Response Text: {}".format(responseNormal.headers))
-                        torIPDict[torIP]["badReq"] += 1
+                        torIPDict[torIP]["badReq"].append(requestState)
                         self._torManager.newOnionPath()
                         torIP = ""
                 else:
@@ -60,8 +68,9 @@ class BatchMain:
             else:
                 torIP = self.testTORIP()
                 if(torIP not in torIPDict):
-                    torIPDict[torIP] = {"goodReq": 0, "badReq": 0}
+                    torIPDict[torIP] = {"goodReq": [], "badReq": []}
             logging.debug(torIPDict)
+            self.writeTorIPRatingFromFile(torIPDict)
                 
         self.writeTorIPRatingFromFile(torIPDict)
     
@@ -95,7 +104,8 @@ class BatchMain:
                 logging.error("Response Text: {}".format(ipResponse.text))
         else:
             logging.error("Returned Object of Request for IP isn't a Response: {}"
-                          .format(ipResponse))  
+                          .format(ipResponse))
+            self._torManager.getCookies().clear()
         return ""
     
     def testRealIP(self):     
@@ -111,7 +121,8 @@ class BatchMain:
                 logging.error("Response Text: {}".format(ipResponse.text))
         else:
             logging.error("Returned Object of Request for IP isn't a Response: {}"
-                          .format(ipResponse))         
+                          .format(ipResponse))    
+            self._torManager.getCookies().clear()     
         return ""
     
     def loadTorIPRatingFromFile(self):

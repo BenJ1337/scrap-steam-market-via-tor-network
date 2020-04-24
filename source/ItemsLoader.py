@@ -2,6 +2,7 @@ import json
 import os
 import re
 import logging
+from datetime import datetime
 from os import path
 from ProgrammStateVars import ProgrammStateVars
 
@@ -11,11 +12,11 @@ class ItemsLoader:
     
     _game = 'csgo'
     _regExSortFileList = r'' + _game + '_(.*)\\.json'
+    _regExTimestamp = r'.*/var/730_(.*)/'
     _fileList = []
     
     def __init__(self):
-        pass
-    
+        pass    
     
     def main(self):
         print("Create File List")
@@ -51,9 +52,16 @@ class ItemsLoader:
     def getAnzahlDatenpunkte(self):
         return len(self._fileList)
     
-    def get100ItemsVonDatenpunkt(self, datenpunkPointer, itemsPointer):
-        data = self.loadJson(self._fileList[datenpunkPointer][itemsPointer])
+    def getAnzahlDateienDesDatenpunktes(self, datenpunktPointer):
+        return len(self._fileList[datenpunktPointer])
+    
+    def get100ItemsVonDatenpunkt(self, datenpunktPointer, itemsPointer):
+        data = self.loadJson(self._fileList[datenpunktPointer][itemsPointer])
         return data['results']
+    
+    def getTimestampVonDatenpunkt(self, datenpunktPointer):
+        timestampString = re.findall(self._regExTimestamp, self._fileList[datenpunktPointer][0])[0]
+        return datetime.strptime(timestampString, '%Y-%m-%d_%H:%M:%S')
     
     def printItems(self, items):
         for item in items:
