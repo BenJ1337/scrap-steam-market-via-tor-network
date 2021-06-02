@@ -11,4 +11,4 @@ six==1.14.0
 soupsieve==2.0
 stem==1.8.0
 toml==0.10.0
-urllib3==1.25.8
+urllib3==1.26.5
